@@ -4,13 +4,13 @@ import os
 import requests
 from PIL import Image
 
-input_csv = "/Users/petrus/Library/CloudStorage/OneDrive-UniversityofCambridge/GIS_Files/Corona_imagery_usgs/declassiii_6337727fa36fb4b0.csv"
+input_csv = "D:\Onedrive\OneDrive - University of Cambridge\General - ARCH_MAHSA\MAHSA_Mapping\Project Cast Away\AreaOfInterest_PreviewImages_data.csv"
 source_df = pd.read_csv(input_csv, encoding = "ISO-8859-1")
 source_df.columns = source_df.columns.str.replace(' ', '_')
 source_df['url'] = "https://ims.cr.usgs.gov/browse/declass3/" + source_df['Mission'] + "/" + source_df['Operations_Number'].map(lambda x: f'{x:0>5}') + "/" + source_df['Camera'] + "/" + source_df['Entity_ID'] + ".jpg"
 source_df['url'] = source_df['url'].astype('|S') # which will by default set the length to the max len it encounters
 
-output_path = "/Users/petrus/Library/CloudStorage/OneDrive-UniversityofGlasgow/PhD Research/Phd_Data/corona_imagery_usgs/"
+output_path = "D:\Onedrive\OneDrive - University of Cambridge\General - ARCH_MAHSA\MAHSA_Mapping\Project Cast Away\CAST Imagery\Declass3\Preview Images USGS"
 
 #gdal
 kwargs = {
@@ -44,7 +44,7 @@ for row in image_urls.itertuples():
             ds = gdal.Open(img_tif, gdal.GA_Update)
             # # Set spatial reference:
             sr = osr.SpatialReference()
-            sr.ImportFromEPSG(4326)  # 2193 refers to the NZTM2000, but can use any desired projection
+            sr.ImportFromEPSG(4326)  # 4326 refers to the WGS84, but can use any desired projection
             # Calculate image pixel size for corner points
             width, height = Image.open(img_tif).size
             print(width, height)
