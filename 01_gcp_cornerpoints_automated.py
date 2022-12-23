@@ -1,10 +1,11 @@
+import os
+del os.environ['PROJ_LIB']
 from osgeo import gdal, osr
 import pandas as pd
-import os
 import requests
 from PIL import Image
 
-input_csv = "D:\Onedrive\OneDrive - University of Cambridge\General - ARCH_MAHSA\MAHSA_Mapping\Project Cast Away\AreaOfInterest_PreviewImages_data.csv"
+input_csv = "D:\Onedrive\OneDrive - University of Cambridge\General - ARCH_MAHSA\MAHSA_Mapping\Project Cast Away\AreaOfInterest_PreviewImages_data2.csv"
 source_df = pd.read_csv(input_csv, encoding = "ISO-8859-1")
 source_df.columns = source_df.columns.str.replace(' ', '_')
 source_df['url'] = "https://ims.cr.usgs.gov/browse/declass3/" + source_df['Mission'] + "/" + source_df['Operations_Number'].map(lambda x: f'{x:0>5}') + "/" + source_df['Camera'] + "/" + source_df['Entity_ID'] + ".jpg"
@@ -17,7 +18,7 @@ kwargs = {
     'format': 'GTiff'
 }
 
-image_urls = source_df[['NW_Corner_Lat_dec', 'NW_Corner_Long_dec', 'NE_Corner_Lat_dec', 'NE_Corner_Long_dec', 'SE_Corner_Lat_dec', 'SE_Corner_Long_dec', 'SW_Corner_Lat_dec', 'SW_Corner_Long_dec', 'url']]
+image_urls = source_df[['NW_Corner_Lat_dec', 'NW_Corner_Long_dec', 'NE_Corner_Lat_dec', 'NE_Corner_Long_dec', 'SE_Corner_Lat_dec', 'SE_Corner_Long_dec', 'SW_Corner_Lat_dec', 'SW_Corner_Long_dec', 'url', 'Mission', 'Region']]
 # print(image_urls)
 # loop through urls in source excel file of different preview images
 for row in image_urls.itertuples():
@@ -26,7 +27,7 @@ for row in image_urls.itertuples():
         img_blob = requests.get(row.url, timeout=5).content
         with open(str(row.url).split('/')[-1].replace("'",""), 'wb') as img_file:
             # print image file from url
-            name = str(row.url).split('/')[-1].replace(".jpg'", "")
+            name = row.Region + '_' + row.Mission + '_' + str(row.url).split('/')[-1].replace(".jpg'", "")
             print(name)
             #export image as jpg to folder
             image = img_file.write(img_blob)
@@ -39,7 +40,7 @@ for row in image_urls.itertuples():
                 pass
             gdal.Translate(output_path + "/output_tif/" + name + ".tif", img_path, **kwargs)
             #get path to exported tif image
-            img_tif = (output_path + "output_tif/" + name + ".tif")
+            img_tif = (output_path + "/output_tif/" + name + ".tif")
             #open image in gdal for referencing
             ds = gdal.Open(img_tif, gdal.GA_Update)
             # # Set spatial reference:
