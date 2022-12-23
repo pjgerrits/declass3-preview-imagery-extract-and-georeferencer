@@ -2,7 +2,7 @@ import os
 del os.environ['PROJ_LIB']
 from osgeo import gdal
 
-root_dir = r"D:\Onedrive\OneDrive - University of Cambridge\General - ARCH_MAHSA\MAHSA_Mapping\Project Cast Away\CAST Imagery\Declass3\Preview Images USGS\Gujarat"
+root_dir = r"D:\Onedrive\OneDrive - University of Cambridge\General - ARCH_MAHSA\MAHSA_Mapping\Project Cast Away\CAST Imagery\Declass3\Preview Images USGS\Balochistan"
 
 for root, dirs, files in os.walk(root_dir):
     for f in files:
