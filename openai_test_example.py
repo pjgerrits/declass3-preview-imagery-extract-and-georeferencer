@@ -27,3 +27,5 @@ for root, dirs, files in os.walk(main_dir):
         print('completed vrt:', root)
 print('tasks completed')
 
+
+

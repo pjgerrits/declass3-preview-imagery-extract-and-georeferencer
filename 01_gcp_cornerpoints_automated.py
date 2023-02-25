@@ -5,13 +5,14 @@ import pandas as pd
 import requests
 from PIL import Image
 
-input_csv = "D:\Onedrive\OneDrive - University of Cambridge\General - ARCH_MAHSA\MAHSA_Mapping\Project Cast Away\AreaOfInterest_PreviewImages_data2.csv"
+input_csv = r"C:\Users\pietg\OneDrive - University of Glasgow\PhD Research\Phd_Data\Hexagon_imagery_usgsoutput_tif\source_data\declassiii_63c88fa64097f192_join2.csv"
 source_df = pd.read_csv(input_csv, encoding = "ISO-8859-1")
 source_df.columns = source_df.columns.str.replace(' ', '_')
+print(source_df.head())
 source_df['url'] = "https://ims.cr.usgs.gov/browse/declass3/" + source_df['Mission'] + "/" + source_df['Operations_Number'].map(lambda x: f'{x:0>5}') + "/" + source_df['Camera'] + "/" + source_df['Entity_ID'] + ".jpg"
 source_df['url'] = source_df['url'].astype('|S') # which will by default set the length to the max len it encounters
 
-output_path = "D:\Onedrive\OneDrive - University of Cambridge\General - ARCH_MAHSA\MAHSA_Mapping\Project Cast Away\CAST Imagery\Declass3\Preview Images USGS"
+output_path = r"D:\Onedrive\Koc Universitesi\GeoAI_LULC_Seg - Aerial Photos\Hexagon_Imagery_Piet"
 
 #gdal
 kwargs = {
@@ -35,12 +36,12 @@ for row in image_urls.itertuples():
             img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),img_file.name)
             # convert image to .tif and create folder if not exist
             try:
-                os.makedirs(output_path + "/output_tif/")
+                os.makedirs(output_path + "/output_tif/" + row.Region + "/" + row.Mission)
             except OSError:
                 pass
-            gdal.Translate(output_path + "/output_tif/" + name + ".tif", img_path, **kwargs)
+            gdal.Translate(output_path + "/output_tif/" + row.Region + "/" + row.Mission + "/" + name + ".tif", img_path, **kwargs)
             #get path to exported tif image
-            img_tif = (output_path + "/output_tif/" + name + ".tif")
+            img_tif = (output_path + "/output_tif/" + row.Region + "/" + row.Mission + "/" + name + ".tif")
             #open image in gdal for referencing
             ds = gdal.Open(img_tif, gdal.GA_Update)
             # # Set spatial reference:
@@ -67,3 +68,4 @@ for row in image_urls.itertuples():
             ds = None
     except Exception as ex:
        print('Failed to get:',row.url, ex)
+print('tasks completed')
